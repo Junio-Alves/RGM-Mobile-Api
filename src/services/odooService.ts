@@ -52,7 +52,7 @@ class OdooService {
         }
     };
 
-    odooFetchUserData = async (email: string) => {
+    odooFetchUserData = async (email: string): Promise<IUserInterface | null> => {
         const sessionId = getSessionIdCookie(); // Obtém o session_id do banco de dados
         try {
             const response = await axios.post(
@@ -65,7 +65,7 @@ class OdooService {
                         method: 'search_read',
                         args: [[['work_email', '=', email]]],
                         kwargs: {
-                            fields: ['id', 'name', 'work_email'], // Adicione os campos desejados aqui
+                            fields: ['id', 'name', 'work_email','x_studio_senha'], // Adicione os campos desejados aqui
                             limit: 100,
                         },
                     },
@@ -77,10 +77,17 @@ class OdooService {
                     },
                 }
             );
-            if(response.data.result === undefined || response.data.result.length === 0) {
-                return "Usuário não encontrado";
+            if (response.data.result === undefined || response.data.result.length === 0) {
+                return null;
             }
-            return response.data.result; // Retorna os dados do usuário
+            const user = response.data.result[0];
+
+            return { 
+                id: user.id,
+                name: user.name,
+                work_email: user.work_email,
+                password: user.x_studio_senha,
+            } as IUserInterface; // Retorna o usuário encontrado
         } catch (error) {
             console.error('Erro ao buscar dados do usuário no Odoo:', error);
             throw error;

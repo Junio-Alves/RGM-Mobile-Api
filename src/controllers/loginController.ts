@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
 import odooService from '../services/odooService.js';
+import dotenv from "dotenv";
+dotenv.config();
+import jwt from 'jsonwebtoken';
 
 class Login {
     // Definindo o método 'login' para ser um controlador de rota
@@ -11,11 +14,34 @@ class Login {
                 res.status(400).json({
                     errors: ["Invalid credentials"],
                 });
+                return;
             }
+            
             const data = await odooService.odooFetchUserData(email);
-            // A lógica de autenticação pode ser inserida aqui
+            if (!data) {
+                res.status(401).json({
+                    errors: ["Invalid credentials"],
+                });
+                return;
+            }
 
-            res.status(200).json({ data: data });
+            if (data.password !== password) {
+                res.status(401).json({
+                    errors: ["Invalid credentials"],
+                });
+                return;
+            }
+          
+            const token = jwt.sign({ id: data.id, nome: data.name, email: data.work_email }, process.env.JWT_SECRET!);
+
+            res.status(200).json({
+                token: token,
+                data: {
+                    id: data.id,
+                    name: data.name,
+                    email: data.work_email
+                }
+            });
 
         } catch (error) {
             res.status(500).json({ error: 'Something went wrong' });

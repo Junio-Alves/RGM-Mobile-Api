@@ -1,9 +1,10 @@
 import {Router} from "express";
 import { fetchProjects } from "../controllers/tarefasController.js";
+import loginRequired from "../middlewares/loginRequired.js";
 
 const router = Router();
 
-router.get("/",fetchProjects);
+router.get("/",loginRequired,fetchProjects);
 
 
 export default router;
