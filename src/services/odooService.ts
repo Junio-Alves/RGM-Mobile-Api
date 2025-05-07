@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import dotenv from "dotenv";
 dotenv.config();
 import { saveSessionId, getSessionId } from '../utils/sessionStore.js';
+import { IUserInterface } from '../interfaces/iUserInterface.js';
 
 
 // Função para configurar axios com o session_id nos headers
@@ -18,7 +19,7 @@ const getSessionIdCookie = (): string => {
 }
 
 class OdooService {
-    odooLogin = async () => {
+    /*odooLogin = async () => {
         try {
             const response: AxiosResponse = await axios.post(
                 `${process.env.ODOO_URL}/web/session/authenticate`,
@@ -50,30 +51,39 @@ class OdooService {
             console.error('Erro ao logar no Odoo:', error);
             throw error;
         }
-    };
+    };*/
 
     odooFetchUserData = async (email: string): Promise<IUserInterface | null> => {
-        const sessionId = getSessionIdCookie(); // Obtém o session_id do banco de dados
         try {
             const response = await axios.post(
-                `${process.env.ODOO_URL}/web/dataset/call_kw/hr.employee/search_read`,
+                `${process.env.ODOO_URL}/jsonrpc`,
                 {
-                    jsonrpc: '2.0',
-                    method: 'call',
+
+                    jsonrpc: "2.0",
+                    method: "call",
                     params: {
-                        model: 'hr.employee',
-                        method: 'search_read',
-                        args: [[['work_email', '=', email]]],
-                        kwargs: {
-                            fields: ['id', 'name', 'work_email','x_studio_senha'], // Adicione os campos desejados aqui
-                            limit: 100,
-                        },
+                        service: "object",
+                        method: "execute_kw",
+                        args: [
+                            process.env.ODOO_DB,     // Nome do banco de dados
+                            "7",         // O uid result retornado da autenticação
+                            process.env.ODOO_API_KEY,    // Senha do usuário
+                            "hr.employee",// Nome do modelo (tabela)
+                            "search_read", // Método a ser chamado (search_read para buscar dados)
+                            [
+                                [["work_email", "=", email]]
+                            ],
+                            {
+                                fields: ["id","work_email","name","x_studio_senha","user_partner_id"]    // Campos que você quer verificar
+                            }
+                        ]
                     },
+                    "id": 2
+
                 },
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        'Cookie': `session_id=${sessionId}`,
                     },
                 }
             );
@@ -81,17 +91,58 @@ class OdooService {
                 return null;
             }
             const user = response.data.result[0];
-
-            return { 
+            return {
                 id: user.id,
                 name: user.name,
                 work_email: user.work_email,
                 password: user.x_studio_senha,
+                partner_id: user.user_partner_id[0],
             } as IUserInterface; // Retorna o usuário encontrado
         } catch (error) {
             console.error('Erro ao buscar dados do usuário no Odoo:', error);
             throw error;
         }
+    }
+    odooFetchProjects = async (user_partner_id: number) => {
+        try {
+            const response = await axios.post(
+                `${process.env.ODOO_URL}/jsonrpc`,
+                {
+                    jsonrpc: "2.0",
+                    method: "call",
+                    params: {
+                        service: "object",
+                        method: "execute_kw",
+                        args: [
+                            process.env.ODOO_DB,
+                            "7",
+                            process.env.ODOO_API_KEY,
+                            "project.project",
+                            "search_read",
+                            [
+                                [["message_partner_ids", "in", [user_partner_id]]],
+                            ],
+                            {
+                                fields: ["id", "name"],
+                            },
+                        ],
+                    },
+                    id: 2,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+            return response.data.result; // Retorna os projetos encontrados
+        } catch (error) {
+            console.error('Erro ao buscar projetos do Odoo:', error);
+            throw error;
+        }
+    };
+    odooFetchTasks = async () => {
+
     }
 
     // Função para verificar se a sessão expirou

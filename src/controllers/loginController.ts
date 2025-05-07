@@ -17,29 +17,30 @@ class Login {
                 return;
             }
             
-            const data = await odooService.odooFetchUserData(email);
-            if (!data) {
+            const user = await odooService.odooFetchUserData(email);
+            if (!user) {
                 res.status(401).json({
                     errors: ["Invalid credentials"],
                 });
                 return;
             }
 
-            if (data.password !== password) {
+            if (user.password !== password) {
                 res.status(401).json({
                     errors: ["Invalid credentials"],
                 });
                 return;
             }
           
-            const token = jwt.sign({ id: data.id, nome: data.name, email: data.work_email }, process.env.JWT_SECRET!);
+            const token = jwt.sign({ id: user.id, nome: user.name, email: user.work_email, user_partner_id:user.partner_id }, process.env.JWT_SECRET!);
 
             res.status(200).json({
                 token: token,
                 data: {
-                    id: data.id,
-                    name: data.name,
-                    email: data.work_email
+                    id: user.id,
+                    name: user.name,
+                    email: user.work_email,
+                    user_partner_id: user.partner_id,
                 }
             });
 

@@ -8,6 +8,5 @@ export const saveSessionId = (value: string) => {
 
 export const getSessionId = (): string | null => {
   const row = db.prepare(`SELECT value FROM session WHERE id = 'session_id'`).get() as { value: string } | undefined;
-  console.log('Session ID:', row?.value); // Log the session ID
   return row?.value || null;
 };
