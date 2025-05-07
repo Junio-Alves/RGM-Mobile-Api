@@ -10,6 +10,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts"],  // Inclui os arquivos da pasta src
+  "include": ["src/**/*.ts", "src/services/Odoo/user.ts"],  // Inclui os arquivos da pasta src
   "exclude": ["node_modules"]  // Exclui node_modules da compilação
 }

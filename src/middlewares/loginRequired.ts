@@ -22,7 +22,7 @@ export default function loginRequired(req:Request, res:Response, next:NextFuncti
             work_email: (data as any).email,
             partner_id: (data as any).user_partner_id,
         } as IUserInterface;
-        
+
         (req as any).user = user; // Adiciona o usuário ao objeto de requisição
         next();
     }catch(e){

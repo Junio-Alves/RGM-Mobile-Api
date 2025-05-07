@@ -1,5 +1,4 @@
 import app from "./app.js";
-import  odooService  from "./services/odooService.js";
 
 const PORT =  3000;
 

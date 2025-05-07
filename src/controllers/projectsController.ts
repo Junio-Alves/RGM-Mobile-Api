@@ -1,15 +1,14 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import dotenv from "dotenv";
-import { getSessionId } from '../utils/sessionStore.js';
 dotenv.config();
-import odooService from '../services/odooService.js';
 import { AuthenticatedRequest } from '../interfaces/IAuthenticatedRequest.js';
+import { odooFetchProjects } from '../services/Odoo/projects.js';
 
 // Função para buscar os projetos do Odoo
 export const fetchProjects = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user!; // Obtém o usuário do objeto de requisição
-    const projects = await odooService.odooFetchProjects(user.partner_id);
+    const projects = await odooFetchProjects(user.partner_id);
 
     // Verifica se a resposta contém os projetos
     if (projects && projects.length > 0) {

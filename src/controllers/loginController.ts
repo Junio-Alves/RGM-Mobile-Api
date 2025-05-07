@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import odooService from '../services/odooService.js';
 import dotenv from "dotenv";
 dotenv.config();
 import jwt from 'jsonwebtoken';
+import { odooFetchUserData } from '../services/Odoo//user';
 
 class Login {
     // Definindo o método 'login' para ser um controlador de rota
@@ -17,7 +17,7 @@ class Login {
                 return;
             }
             
-            const user = await odooService.odooFetchUserData(email);
+            const user = await odooFetchUserData(email);
             if (!user) {
                 res.status(401).json({
                     errors: ["Invalid credentials"],
