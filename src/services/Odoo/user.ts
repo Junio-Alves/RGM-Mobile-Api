@@ -23,7 +23,7 @@ export const odooFetchUserData = async (email: string): Promise<IUserInterface |
                             [["work_email", "=", email]]
                         ],
                         {
-                            fields: ["id","work_email","name","x_studio_senha","user_partner_id"]    // Campos que você quer verificar
+                            fields: ["id","work_email","name","x_studio_senha","message_partner_ids"]    // Campos que você quer verificar
                         }
                     ]
                 },
@@ -44,7 +44,7 @@ export const odooFetchUserData = async (email: string): Promise<IUserInterface |
             name: user.name,
             work_email: user.work_email,
             password: user.x_studio_senha,
-            partner_id: user.user_partner_id[0],
+            partner_id: user.message_partner_ids[0],
         } as IUserInterface; // Retorna o usuário encontrado
     } catch (error) {
         console.error('Erro ao buscar dados do usuário no Odoo:', error);

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import dotenv from "dotenv";
 dotenv.config();
 import jwt from 'jsonwebtoken';
-import { odooFetchUserData } from '../services/Odoo//user';
+import { odooFetchUserData } from '../services/Odoo/user.js';
 
 class Login {
     // Definindo o método 'login' para ser um controlador de rota
