@@ -25,7 +25,7 @@ export const odooFetchTasks = async (user_partner_id: number, project_id: number
                               ]
                         ],
                         {
-                             "fields": ["id", "name", "project_id"]    // Campos que você quer verificar
+                             "fields": ["id", "name", "project_id","date_deadline","planned_date_start","allocated_hours","subtask_allocated_hours","remaining_hours","effective_hours","total_hours_spent","description"]    // Campos que você quer verificar
                         }
                     ]
                 },
