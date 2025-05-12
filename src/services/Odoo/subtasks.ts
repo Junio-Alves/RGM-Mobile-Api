@@ -4,7 +4,7 @@ dotenv.config();
 
 
 
-export const odooFetchTasks = async (user_partner_id: number, project_id: number) => {
+export const odooFetchSubtasks = async (user_partner_id: number, project_id: number,parent_id:number) => {
     try {
         const response = await axios.post(
             `${process.env.ODOO_URL}/jsonrpc`,
@@ -24,8 +24,7 @@ export const odooFetchTasks = async (user_partner_id: number, project_id: number
                               [
                                 ["message_partner_ids", "in", [user_partner_id]],
                                 ["project_id", "=", project_id],
-                                ["parent_id", "=", false ]
-                                
+                                ["parent_id", "=", parent_id],
                               ]
                         ],
                         {

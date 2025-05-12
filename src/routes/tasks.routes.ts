@@ -4,7 +4,7 @@ import { fetchTasks } from "../controllers/tasksController.js";
 
 const router = Router();
 
-router.get("/",loginRequired,fetchTasks);
+router.post("/",loginRequired,fetchTasks);
 
 
 export default router;
