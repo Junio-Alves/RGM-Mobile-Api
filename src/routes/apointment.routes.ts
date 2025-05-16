@@ -1,11 +1,11 @@
 import {Router} from "express";
 import loginRequired from "../middlewares/loginRequired.js";
-import { fetchLogHours } from "../controllers/hoursController.js";
+import { fetchLogHours, logHours } from "../controllers/hoursController.js";
 
 const router = Router();
 
 router.post("/",loginRequired,fetchLogHours);
-router.post("/logHours",loginRequired,()=>{});
+router.post("/log",loginRequired,logHours);
 
 
 export default router;

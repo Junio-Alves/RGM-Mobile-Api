@@ -2,7 +2,8 @@ import { Response } from 'express';
 import dotenv from "dotenv";
 dotenv.config();
 import { AuthenticatedRequest } from '../interfaces/IAuthenticatedRequest.js';
-import { odooFetchLogHours } from '../services/Odoo/hours.js';
+import { odooFetchLogHours, odooLogHours } from '../services/Odoo/hours.js';
+import axios from 'axios';
 
 // Função para buscar os apontamentos de horas do Odoo com base no ID da tarefa
 export const fetchLogHours = async (req: AuthenticatedRequest, res: Response) => {
@@ -21,5 +22,26 @@ export const fetchLogHours = async (req: AuthenticatedRequest, res: Response) =>
     }
   } catch (error) {
     res.status(500).json({ message: 'Erro ao buscar apontamentos do Odoo.', error: error });
+  }
+};
+
+export const logHours = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user = req.user!;
+    const { logName, project_id, task_id, unit_amount, date, account_id } = req.body;
+
+    if (!logName || !project_id || !task_id || !unit_amount || !date) {
+      res.status(400).json({ error: 'Dados insuficientes para registrar horas.' });
+      return;
+    }
+
+    const result = await odooLogHours(logName, project_id, task_id, user.id, unit_amount, date, account_id);
+    res.status(200).json(result);
+  } catch (error: any) {
+    console.error('Erro no endpoint /logHours:', error?.response?.data || error?.message || error);
+    res.status(500).json({
+      message: 'Erro ao registrar apontamento de horas no Odoo.',
+      error: error?.response?.data || error?.message || error,
+    });
   }
 };

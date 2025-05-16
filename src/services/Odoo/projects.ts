@@ -22,7 +22,7 @@ export const odooFetchProjects = async (user_partner_id: number) => {
                             [["message_partner_ids", "in", [user_partner_id]]],
                         ],
                         {
-                            fields: ["id","user_id","name","description","date_start","date","allocated_hours","remaining_hours","effective_hours"],
+                            fields: ["id","user_id","name","description","date_start","date","allocated_hours","remaining_hours","effective_hours","account_id"],
                         },
                     ],
                 },
