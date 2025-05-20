@@ -4,8 +4,14 @@ dotenv.config();
 
 
 
-export const odooFetchTasks = async (user_partner_id: number, project_id: number) => {
+export const odooFetchTasks = async (project_id: number,user_partner_id: number,showAllTasks:boolean) => {
     try {
+        const domain: any[] = [["project_id", "=", project_id], ["parent_id", "=", false ]];
+
+        if (!showAllTasks) {
+            domain.push(["message_partner_ids", "in", [user_partner_id]]);
+        }
+
         const response = await axios.post(
             `${process.env.ODOO_URL}/jsonrpc`,
             {
@@ -20,14 +26,7 @@ export const odooFetchTasks = async (user_partner_id: number, project_id: number
                         process.env.ODOO_API_KEY,    // Senha do usuário
                         "project.task",// Nome do modelo (tabela)
                         "search_read", // Método a ser chamado (search_read para buscar dados)
-                        [
-                              [
-                                ["message_partner_ids", "in", [user_partner_id]],
-                                ["project_id", "=", project_id],
-                                ["parent_id", "=", false ]
-                                
-                              ]
-                        ],
+                        [domain],
                         {
                              "fields": ["id", "name", "project_id","date_deadline","planned_date_start","allocated_hours","subtask_allocated_hours","remaining_hours","effective_hours","total_hours_spent","description"]    // Campos que você quer verificar
                         }

@@ -23,7 +23,7 @@ export const odooFetchUserData = async (email: string): Promise<IUserInterface |
                             [["work_email", "=", email]]
                         ],
                         {
-                            fields: ["id","work_email","name","x_studio_senha","message_partner_ids"]    // Campos que você quer verificar
+                            fields: ["id", "work_email", "name", "x_studio_senha", "message_partner_ids"]    // Campos que você quer verificar
                         }
                     ]
                 },
@@ -52,4 +52,40 @@ export const odooFetchUserData = async (email: string): Promise<IUserInterface |
     }
 }
 
-export const odooChangeUserPassword = async (userId: number, newPassword: string): Promise<void> => {}
+export const odooChangeUserPassword = async (userId: number, newPassword: string): Promise<void | null> => {
+    try {
+        const response = await axios.post(
+            `${process.env.ODOO_URL}/jsonrpc`,
+            {
+                jsonrpc: "2.0",
+                method: "call",
+                params: {
+                    service: "object",
+                    method: "execute_kw",
+                    args: [
+                        process.env.ODOO_DB,     // Nome do banco de dados
+                        process.env.ODOO_UID,         // O uid result retornado da autenticação
+                        process.env.ODOO_API_KEY,    // Senha do usuário
+                        "hr.employee",// Nome do modelo (tabela)
+                        "write", // Método a ser chamado (search_read para buscar dados)
+                        [[userId], { // id do funcionario
+                            "x_studio_senha": newPassword    // Campos que você quer verificar
+                        }]
+                    ]
+
+
+                },
+                "id": 2
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return response.data.result; // Retorna os projetos encontrados
+    } catch (error) {
+        console.error('Erro ao alterar senha:', error);
+        throw error;
+    }
+}
