@@ -5,24 +5,27 @@ import tasksRoutes from "./routes/tasks.routes.js";
 import hoursRoutes from "./routes/apointment.routes.js";
 
 
-class App{
+class App {
     app: express.Application;
 
-    constructor(){
+    constructor() {
         this.app = express();
         this.middlewares();
         this.routes();
     }
 
-    middlewares(){
+    middlewares() {
         this.app.use(express.json());
     }
 
-    routes(){
-      this.app.use("/projects",projectRoutes);
-      this.app.use("/login",authRoutes);
-      this.app.use("/tasks",tasksRoutes);
-      this.app.use("/hours",hoursRoutes);
+    routes() {
+        this.app.get("/", (req, res) => {
+            res.send("Hello World! This is the API for the Odoo integration.");
+        });
+        this.app.use("/projects", projectRoutes);
+        this.app.use("/login", authRoutes);
+        this.app.use("/tasks", tasksRoutes);
+        this.app.use("/hours", hoursRoutes);
     }
 }
 
