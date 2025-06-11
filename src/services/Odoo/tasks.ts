@@ -4,12 +4,26 @@ dotenv.config();
 
 
 
-export const odooFetchTasks = async (project_id: number,user_partner_id: number,showAllTasks:boolean) => {
+export const odooFetchTasks = async (project_id: number,user_partner_id: number,showAllTasks:boolean,onlyInProgress:boolean, task_id?:number,parent_id?:number) => {
     try {
-        const domain: any[] = [["project_id", "=", project_id], ["parent_id", "=", false ]];
+        const domain: any[] = [["project_id", "=", project_id]];
+
+        if (parent_id) {
+            domain.push(["parent_id", "=", parent_id]);
+        } else{
+            domain.push(["parent_id", "=", false]);
+        }
 
         if (!showAllTasks) {
             domain.push(["message_partner_ids", "in", [user_partner_id]]);
+        }
+
+        if (onlyInProgress) {
+            domain.push(["state", "=", "01_in_progress"]);
+        }
+
+        if (task_id) {
+            domain.push(["id", "=", task_id]);
         }
 
         const response = await axios.post(

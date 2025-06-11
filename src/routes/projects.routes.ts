@@ -1,5 +1,5 @@
 import {Router} from "express";
-import { fetchProjects } from "../controllers/projectsController.js";
+import { fetchProjects } from "../controllers/Project/projectsController.js";
 import loginRequired from "../middlewares/loginRequired.js";
 
 const router = Router();

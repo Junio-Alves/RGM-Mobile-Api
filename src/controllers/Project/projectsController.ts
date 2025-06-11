@@ -1,20 +1,21 @@
 import { Response } from 'express';
 import dotenv from "dotenv";
 dotenv.config();
-import { AuthenticatedRequest } from '../interfaces/IAuthenticatedRequest.js';
-import { odooFetchProjects } from '../services/Odoo/projects.js';
+import { AuthenticatedRequest } from '../../interfaces/IAuthenticatedRequest.js';
+import { odooFetchProjects } from '../../services/Odoo/projects.js';
 
 // Função para buscar os projetos do Odoo
 export const fetchProjects = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user!; // Obtém o usuário do objeto de requisição
-    const projects = await odooFetchProjects(user.partner_id);
+    const { project_id } = req.body || {}; // Obtém o ID do projeto do corpo da requisição, caso exista
+    const projects = await odooFetchProjects(user.partner_id, project_id);
 
     // Verifica se a resposta contém os projetos
     if (projects && projects.length > 0) {
       res.status(200).json(projects); // Retorna os projetos encontrados
     } else {
-      res.status(404).json({ error: 'Nenhum projeto encontrado.' });
+      res.status(204).json({ error: 'Nenhum projeto encontrado.' });
     }
   } catch (error) {
     console.error('Erro ao buscar projetos do Odoo:', error);

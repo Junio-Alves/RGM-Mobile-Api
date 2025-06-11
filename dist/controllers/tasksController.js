@@ -5,7 +5,7 @@ import { odooFetchSubtasks } from '../services/Odoo/subtasks.js';
 // Função para buscar os projetos do Odoo
 export const fetchTasks = async (req, res) => {
     try {
-        const { project_id, parent_id, showAllTasks } = req.body || {};
+        const { project_id, parent_id, showAllTasks, onlyInProgress } = req.body || {};
         if (!project_id) {
             res.status(400).json({
                 errors: ["Project ID required"],
@@ -29,7 +29,10 @@ export const fetchTasks = async (req, res) => {
             return;
         }
         //Se não, busca as tasks
-        const tasks = await odooFetchTasks(project_id, user.partner_id, showAllTasks || false);
+        //Se o showAllTasks for true, busca todas as tasks, se não, busca apenas as tasks do usuário
+        //Se o onlyInProgress for true, busca apenas as tasks em andamento
+        //Se o onlyInProgress for false, busca todas as tasks em outros estados
+        const tasks = await odooFetchTasks(project_id, user.partner_id, showAllTasks || false, onlyInProgress || false);
         if (!tasks) {
             res.status(404).json({
                 error: 'Nenhum projeto encontrado.',

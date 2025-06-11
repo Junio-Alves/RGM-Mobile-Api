@@ -1,6 +1,6 @@
 import {Router} from "express";
 import loginRequired from "../middlewares/loginRequired.js";
-import { fetchTasks } from "../controllers/tasksController.js";
+import { fetchTasks } from "../controllers/Tasks/tasksController.js";
 
 const router = Router();
 

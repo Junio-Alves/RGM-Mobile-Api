@@ -1,11 +1,18 @@
 import {Router} from "express";
-import { ChangePassword, Login } from "../controllers/loginController.js";
+import { ChangePassword} from "../controllers/Auth/changePasswordController.js";
+import { Login } from "../controllers/Auth/loginController.js";
 import { changePasswordLimiter } from "../middlewares/changePasswordLimiter.js";
+import { Logout } from "../controllers/Auth/logoutController.js";
+import loginRequired from "../middlewares/loginRequired.js";
+import { validate } from "../controllers/Auth/tokenValid.js";
 
 const router = Router();
 
 router.post("/",Login);
+//router.post("/changePassword",ChangePassword);
 router.post("/changePassword",changePasswordLimiter,ChangePassword);
+router.post("/logout",loginRequired,Logout);
+router.get("/validate",loginRequired,validate);
 
 export default router;
 

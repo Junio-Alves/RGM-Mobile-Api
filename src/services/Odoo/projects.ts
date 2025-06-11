@@ -2,7 +2,12 @@ import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const odooFetchProjects = async (user_partner_id: number) => {
+export const odooFetchProjects = async (user_partner_id: number,project_id?:number) => {
+    const domain: any[] = [["message_partner_ids", "in", [user_partner_id]]];
+    // Se um project_id for fornecido, adiciona ao domínio de busca
+    if (project_id) {
+        domain.push(["id", "=", project_id]);
+    }
     try {
         const response = await axios.post(
             `${process.env.ODOO_URL}/jsonrpc`,
@@ -19,7 +24,7 @@ export const odooFetchProjects = async (user_partner_id: number) => {
                         "project.project",
                         "search_read",
                         [
-                            [["message_partner_ids", "in", [user_partner_id]]],
+                            domain,
                         ],
                         {
                             fields: ["id","user_id","name","description","date_start","date","allocated_hours","remaining_hours","effective_hours","account_id"],
